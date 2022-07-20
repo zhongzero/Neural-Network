@@ -100,7 +100,7 @@ class Linear(Layer):
             TODO: Finish the forward propagation function and save some variables if you need
         """
         self.x=np.array([x])
-        self.y=np.add( np.matmul( x , self.W ) ,self.b )  # y=XW+B
+        self.y=(x@self.W)-self.b  # y=XW+B
         return self.y
         # x为[1 x size_in]的输入向量，self.y为[1 x size_out]的输出向量
     
@@ -108,7 +108,7 @@ class Linear(Layer):
         """
             TODO: Finish the backward propagation function and save gradients of W and b
         """
-        self.grad_y=np.array([node_grad])
+        self.grad_y=node_grad
         return node_grad@np.transpose(self.W)
         # 输入大小为[1 x size_out]的向量，输出大小为[1 x size_in]的向量
     
@@ -118,7 +118,8 @@ class Linear(Layer):
         """
         # print(np.transpose(self.x))
         # print(self.grad_y)
-        self.W= self.W -learning_rate * ( np.transpose(self.x) @ self.grad_y )
+        self.W= self.W - learning_rate * ( np.transpose(self.x) @ np.array([self.grad_y]) )
+        self.b= self.b + learning_rate * self.grad_y
         #通过learning_rate,前一层的输入数据，和算出的对后一层输出数据的梯度 来算出delta(W)
         
 

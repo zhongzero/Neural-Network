@@ -5,13 +5,13 @@ import numpy as np
 np.random.seed(1234)
 X=np.random.rand(2,3)
 # X=np.array([[-1,3],[1,1]])
-X=np.array([1,2])
+X=np.array([[1,2],[2,2],[1,1]])
 Y=np.array([[2,2],[1,1]])
 # X=np.maximum(X,3)
 # X= np.zeros(4)
 # X=Y*(X>0)
 print(X)
-print(np.transpose(X))
+print(X@np.transpose(X))
 
 
 # 创建数组
