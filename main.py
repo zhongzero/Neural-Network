@@ -8,8 +8,11 @@ from libcpp import Game
 args = dotdict({
     'run_name': 'Gomoku',
     'workers': mp.cpu_count() - 1,
+    #载入start_iter-1完成的训练数据，从start_iter开始依次训练
     'start_iter': 1,
+    #训练到num_iters结束
     'num_iters': 50,
+    #一个batch的训练数据大小
     'train_batch_size': 512,
     'train_steps_per_iteration': 200,
     'max_sample_num': 10000, 
@@ -23,8 +26,10 @@ args = dotdict({
     'random_compare_freq': 10,
     'compare_with_past': True,
     'past_compare_freq': 10,
+    #存储训练完的数据的文件夹
     'checkpoint': 'checkpoint',
-    'data': 'data',
+    #数据存储地址
+    'data': '../Neural_Network_data',
 })
 
 if __name__ == "__main__":

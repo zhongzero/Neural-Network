@@ -61,3 +61,15 @@ for num in range(10,20):  # 迭代 10 到 20 之间的数字
          break            # 跳出当前循环
    else:                  # 循环的 else 部分
       print ('%d 是一个质数' % num)
+      
+#import
+import math
+print(math.pi)
+相当于调用了名为math的库
+from math import pi
+print(pi)
+相当于调用了名为math的库中的pi(调用时前面不能加math，因为math并没有被import)
+
+import math as M
+print(M.math)
+相当于调用了名为math的库，并define M作为math的别名(调用时前面不能用math.pi，因为math被import时用了M的别名)
