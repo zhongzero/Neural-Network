@@ -16,9 +16,9 @@ from network.NNetArchitecture import NNetArchitecture as nnetarch
 """
     TODO: Tune or add new arguments if you need
 """
-#定义损失函数(用交叉熵函数)
-loss_fn1=torch.nn.CrossEntropyLoss(reduction='sum')
-loss_fn2=torch.nn.L1Loss(reduction='sum')
+#定义损失函数
+loss_fn1=torch.nn.BCELoss(reduction='mean')
+loss_fn2=torch.nn.MSELoss(reduction='mean')
 
 
 args = dotdict({
@@ -59,6 +59,7 @@ class NNetWrapper():
         # print("pi output",outputs.shape)
         # print("pi targets",targets.shape)
         # print("!!!!")
+        outputs=torch.exp(outputs)
         loss_pi=loss_fn1(outputs,targets)
         
         return loss_pi
@@ -192,10 +193,15 @@ class NNetWrapper():
             TODO: save the model (nnet, optimizer and scheduler) in the given filepath
         """
         #保存整个模型到指定位置
-        # torch.save(self.nnet,folder+'/'+filename)
+        # torch.save(self.nnet,filepath)
         
         #只保存模型参数到指定位置
-        torch.save(self.nnet.state_dict(),folder+'/'+filename)
+        # torch.save(self.nnet.state_dict(),filepath)
+        savefile={'model_state':self.nnet.state_dict(),
+                  'optimizer_state':self.optimizer.state_dict(),
+                  'scheduler_state':self.scheduler.state_dict()
+                  }
+        torch.save(savefile,filepath)
 
     def load_checkpoint(self, folder='checkpoint', filename='checkpoint.pth.tar'):
         filepath = os.path.join(folder, filename)
@@ -206,9 +212,11 @@ class NNetWrapper():
             TODO: load the model (nnet, optimizer and scheduler) from the given filepath
         """
         #从指定位置加载整个模型
-        # self.nnet=torch.load(folder+'/'+filename)
+        # self.nnet=torch.load(filepath)
         
         #从指定位置加载模型参数
-        self.nnet.load_state_dict(torch.load(folder+'/'+filename))
-
-            
+        # self.nnet.load_state_dict(torch.load(filepath))
+        state=torch.load(filepath)
+        self.nnet.load_state_dict(state['model_state'])
+        self.optimizer.load_state_dict(state['optimizer_state'])
+        self.scheduler.load_state_dict(state['scheduler_state'])

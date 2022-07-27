@@ -411,81 +411,11 @@ batchsize:每个batch的训练样本数量
 
 """
 
-
+import torch.nn as nn
 import torch
-class MyLayer(torch.nn.Module):
-    '''
-    因为这个层实现的功能是：y=(x+bias)@weights,所以有两个参数：
-    权值矩阵weights
-    偏置矩阵bias
-    输入 x 的维度是(in_features,)
-    输出 y 的维度是(out_features,)
-    weights 的维度是(in_features, out_features)
-    bias 的维度是(in_fearures,)，注意不是out_features
-    '''
-    def __init__(self, in_features, out_features, bias=True):
-        super(MyLayer, self).__init__()  # 和自定义模型一样，第一句话就是调用父类的构造函数
-        self.in_features = in_features
-        self.out_features = out_features
-        self.weight = torch.nn.Parameter(torch.randn(in_features, out_features)) # 由于weights是可以训练的，所以使用Parameter来定义
-        #torch.nn.Parameter继承自torch.randn，其作用将一个不可训练的类型的参数转化为可训练的类型为parameter的参数，并将这个参数绑定到module里面，成为module中可训练的参数。
-        if bias:
-            self.bias = torch.nn.Parameter(torch.randn(in_features))             # 由于bias是可以训练的，所以使用Parameter来定义
-        else:
-            self.register_parameter('bias', None)
- 
-    def forward(self, input):
-        tmp=input+self.bias
-        y=torch.matmul(tmp,self.weight)
-        return y
- 
-N, D_in, D_out = 10, 5, 3  # 一共10组样本，输入特征为5，输出特征为3 
- 
-# 先定义一个模型
-class MyNet(torch.nn.Module):
-    def __init__(self):
-        super(MyNet, self).__init__()  # 第一句话，调用父类的构造函数
-        self.mylayer1 = MyLayer(D_in,D_out)
- 
-    def forward(self, x):
-        x = self.mylayer1(x)
- 
-        return x
- 
-model = MyNet()
-
-#创建输入、输出数据
-x = torch.randn(N, D_in)  #（10，5）
-y = torch.randn(N, D_out) #（10，3）
-#定义损失函数
-loss_fn = torch.nn.MSELoss(reduction='sum')  # \sigma((x_i-y_i)^2)
-#设置学习率
-learning_rate = 1e-3
-#创建造一个Adam参数优化器类(优化器的作用为：给反向传播得到的梯度进行一些修改优化再进行更新) (除了Adam还有SGD等，但一般没Adam好用)
-# params(必须):给定所有需要训练的参数,lr(可选):learning_rate,除此之外还有其他一些可选参数
-optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-#创建一个StepLR的scheduler(作用为:可以调整optimizer的lr),StepLR为指定的频率进行衰减，除此之外还有指数衰减ExponentialLR等
-# optimizer(必须),step_size(必须):学习率下降间隔数,gamma:学习率调整倍数(默认为0.1)
-# 一般以epoch为单位进行更换
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=30,gamma = 0.8 )
-
-for epoch in range(2):
-    for t in range(10):
-        
-        # 第一步：数据的前向传播，计算预测值p_pred
-        y_pred = model(x)
-    
-        # 第二步：计算预测值p_pred与真实值的误差
-        loss = loss_fn(y_pred, y)
-        print(f"第{epoch+1}个epoch 的 第 {t+1} 次训练, 损失是 {loss.item()}")
-    
-        # 注:在反向传播之前，将模型的梯度归零，不然这次算出的梯度会和之前的叠加
-        optimizer.zero_grad()
-    
-        # 第三步：反向传播误差(pytorch会自动求导算梯度)
-        loss.backward()
-    
-        # 第四步：在算完所有参数的梯度后，更新整个网络的参数
-        optimizer.step()
-    # 每次epoch对scheduler进行一次更新(即对optimizer的lr进行更新)
-    scheduler.step()
+nllloss = nn.NLLLoss( reduction='sum')
+predict = torch.Tensor([[2, 3, 1],
+                        [3, 7, 9]])
+label = torch.tensor([1, 2])
+output=nllloss(predict, label)
+print(output)

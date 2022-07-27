@@ -15,7 +15,7 @@ if __name__ == '__main__':
 
     # nnet players
     n1 = NNet(g)
-    n1.load_checkpoint('./checkpoint/', 'iteration-0030.pkl')
+    n1.load_checkpoint('./checkpoint/', 'iteration-0050.pkl')
     p1 = NNPlayer(g, n1, 0).play
 
     # n2 = NNet(g)
